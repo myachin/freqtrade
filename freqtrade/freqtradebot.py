@@ -22,7 +22,6 @@ from freqtrade.enums import (Collateral, RPCMessageType, RunMode, SellType, Sign
 from freqtrade.exceptions import (DependencyException, ExchangeError, InsufficientFundsError,
                                   InvalidOrderException, PricingError)
 from freqtrade.exchange import timeframe_to_minutes, timeframe_to_seconds
-from freqtrade.leverage import liquidation_price
 from freqtrade.misc import safe_value_fallback, safe_value_fallback2
 from freqtrade.mixins import LoggingMixin
 from freqtrade.persistence import Order, PairLocks, Trade, cleanup_db, init_db
@@ -617,8 +616,7 @@ class FreqtradeBot(LoggingMixin):
                     amount
                 )
                 taker_fee_rate = self.exchange.markets[pair]['taker']
-                isolated_liq = liquidation_price(
-                    exchange_name=self.exchange.name,
+                isolated_liq = self.exchange.liquidation_price(
                     open_rate=open_rate,
                     is_short=is_short,
                     leverage=leverage,
